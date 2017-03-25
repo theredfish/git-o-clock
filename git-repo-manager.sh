@@ -1,22 +1,22 @@
 #!/bin/bash
 
-GPM_SH=$(basename $0)
-GPM_DIR="$HOME/.gpm"
-GPM_FILE="$GPM_DIR/projects.txt"
+GRM_SH=$(basename $0)
+GRM_DIR="$HOME/.gpm"
+GRM_FILE="$GRM_DIR/projects.txt"
 
-if [ ! -d $GPM_DIR ]; then
-    mkdir $GPM_DIR
+if [ ! -d $GRM_DIR ]; then
+    mkdir $GRM_DIR
 fi
 
-if [ ! -f $GPM_FILE ]; then
-	touch $GPM_FILE
+if [ ! -f $GRM_FILE ]; then
+	touch $GRM_FILE
 fi
 
 # === Add a git project to the list ===
 #
 # Parameters: $1 the path to the repository.
 # Precondition: None.
-# Postcondition: New .git projects are written to the $GPM_FILE.
+# Postcondition: New .git projects are written to the $GRM_FILE.
 function add() {
 	if [ -d $1 ]; then
 		projects=$(find $1 -name ".git")
@@ -26,8 +26,8 @@ function add() {
 				project_name=${project_path##*/}
 				project_hash=$(echo -n $project_name | sha1sum | tr -d ' -')
 
-				if [ -z "$(grep $project_hash $GPM_FILE)" ]; then
-					echo "$project_hash $(readlink -e $project_path)" >> $GPM_FILE
+				if [ -z "$(grep $project_hash $GRM_FILE)" ]; then
+					echo "$project_hash $(readlink -e $project_path)" >> $GRM_FILE
 					echo "[OK] $project_name : added to your project list"
 				else
 					echo "[KO] $project_name : already in the list"
@@ -39,7 +39,7 @@ function add() {
 # === Display help ===
 function help() {
 	cat <<-EndHelp
-		Usage: $GPM_SH [OPTION]... [DIRECTORY]...
+		Usage: $GRM_SH [OPTION]... [DIRECTORY]...
 
 		Options:
 		    -a, --add
@@ -59,7 +59,7 @@ else
 			if [ "$2" ]; then
 				add $2
 			else
-				echo "$(basename "$0"): missing directory parameter" >&2
+				echo "$GRM_SH: missing directory parameter" >&2
 				echo
 				help
 			fi
@@ -68,7 +68,7 @@ else
 			help
 		;;
 		*)
-		  echo "$(basename "$0"): unrecognized option: $1" >&2
+		  echo "$GRM_SH: unrecognized option: $1" >&2
 		  echo
 		  help
 		;;
