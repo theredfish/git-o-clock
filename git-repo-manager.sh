@@ -50,6 +50,16 @@ function help() {
 	EndHelp
 }
 
+# === Display error ===
+#
+# Parameters: $1 the error message.
+# Precondition: None.
+# Postcondition: Display the error to the stderr.
+function error() {
+	echo "$GRM_SH: $1" >&2
+	echo
+}
+
 # === Option processing ===
 if [ "$#" = 0 ]; then
 	help
@@ -59,8 +69,7 @@ else
 			if [ "$2" ]; then
 				add $2
 			else
-				echo "$GRM_SH: missing directory parameter" >&2
-				echo
+				error "missing directory parameter"
 				help
 			fi
 		;;
@@ -68,8 +77,7 @@ else
 			help
 		;;
 		*)
-		  echo "$GRM_SH: unrecognized option: $1" >&2
-		  echo
+		  error "unrecognized option: $1"
 		  help
 		;;
 	esac
