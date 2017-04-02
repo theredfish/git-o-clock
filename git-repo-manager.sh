@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GRM_SH=$(basename $0)
-GRM_DIR="$HOME/.gpm"
+GRM_DIR="$HOME/.grm"
 GRM_FILE="$GRM_DIR/projects.txt"
 
 if [ ! -d $GRM_DIR ]; then
