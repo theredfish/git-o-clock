@@ -36,6 +36,17 @@ function add() {
 	fi
 }
 
+# === List git projects ===
+#
+# Parameters: None.
+# Precondition: $GRM_FILE exists.
+# Postcondition: Returns a list of project names (empty or not).
+function list() {
+	while IFS= read -r line; do
+		echo ${line##*/}
+	done <$GRM_FILE
+}
+
 # === Display help ===
 function help() {
 	cat <<-EndHelp
@@ -47,6 +58,9 @@ function help() {
 
 		    -h, --help
 			    Display help.
+
+		    -l, --list
+			    List repositories.
 	EndHelp
 }
 
@@ -71,6 +85,13 @@ else
 			else
 				error "missing directory parameter"
 				help
+			fi
+		;;
+		-l | --list)
+			if [ -f $GRM_FILE ]; then
+				list
+			else
+				error "$GRM_FILE doesn't exist."
 			fi
 		;;
 		-h | --help)
