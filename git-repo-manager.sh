@@ -17,7 +17,7 @@ fi
 # Parameters: $1 the path to the repository.
 # Precondition: None.
 # Postcondition: New .git projects are written to the $GRM_FILE.
-function add() {
+add() {
 	if [ -d $1 ]; then
 		projects=$(find $1 -name ".git")
 		find $1 -name '*.git' -print0 |
@@ -43,14 +43,14 @@ function add() {
 # Parameters: None.
 # Precondition: $GRM_FILE exists.
 # Postcondition: Returns a list of project names (empty or not).
-function list() {
+list() {
 	while IFS= read -r line; do
 		echo ${line##*/}
 	done <$GRM_FILE
 }
 
 # === Display help ===
-function help() {
+help() {
 	cat <<-EndHelp
 		Usage: $GRM_SH [OPTION]... [DIRECTORY]...
 
@@ -71,7 +71,7 @@ function help() {
 # Parameters: $1 the error message.
 # Precondition: None.
 # Postcondition: Display the error to the stderr.
-function error() {
+error() {
 	echo "$GRM_SH: $1" >&2
 	echo
 }
