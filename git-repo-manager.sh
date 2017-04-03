@@ -20,14 +20,15 @@ fi
 add() {
 	if [ -d $1 ]; then
 		projects=$(find $1 -name ".git")
-		find $1 -name '*.git' -print0 |
-			while IFS= read -r -d $'\0' line; do
+		find $1 -name '*.git' |
+			while IFS= read -r line; do
 				project_path=${line%/*}
 				project_name=${project_path##*/}
 				project_hash=$(echo -n $project_name | sha1sum | tr -d ' -')
 
 				if [ -z "$(grep $project_hash $GRM_FILE)" ]; then
-					echo "$project_hash $(readlink -e $project_path)" >> $GRM_FILE
+					path=$(readlink -e "$project_path")
+					echo "$project_hash $path" >> $GRM_FILE
 					echo "[OK] $project_name : added to your project list"
 				else
 					echo "[KO] $project_name : already in the list"
