@@ -33,6 +33,8 @@ function add() {
 					echo "[KO] $project_name : already in the list"
 				fi
 			done
+	else
+		error "$1 isn't a directory."
 	fi
 }
 
