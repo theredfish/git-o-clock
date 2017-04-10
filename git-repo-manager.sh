@@ -50,6 +50,24 @@ list() {
 	done <$GRM_FILE
 }
 
+# === Switch to the given project ===
+#
+# Parameters: $@ the name of the project
+# Precondition: None
+# Postcondition: Change the current directory to the project directory
+# 				 Returns an error if the project doesn't exist.
+switch() {
+	project_hash=$(echo -n $@ | sha1sum | tr -d ' -')
+	project_line=$(grep $project_hash $GRM_FILE)
+
+	if [ -n "$project_line" ]; then
+		cd "/${project_line#*/}"
+		git status
+	else
+		error "$1 not found in the list."
+	fi
+}
+
 # === Display help ===
 help() {
 	cat <<-EndHelp
@@ -57,13 +75,19 @@ help() {
 
 		Options:
 		    -a, --add
-			    Add the given repository to the list.
+		        Add the given repository to the list.
 
 		    -h, --help
-			    Display help.
+		        Display help.
 
 		    -l, --list
-			    List repositories.
+	            List repositories.
+
+		    -s, --switch
+		        Switch to a repository by it's name. Examples :
+		        - grm -s directory_name
+		        - grm -s "directory name"
+
 	EndHelp
 }
 
@@ -99,6 +123,9 @@ else
 		;;
 		-h | --help)
 			help
+		;;
+		-s | --switch)
+			switch $2
 		;;
 		*)
 		  error "unrecognized option: $1"
