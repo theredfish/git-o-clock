@@ -1,4 +1,4 @@
 [root]
-name = "git-repo-manager"
+name = "grm"
 version = "0.1.0"
 

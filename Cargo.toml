@@ -1,6 +1,6 @@
 [package]
-name = "git-repo-manager"
+name = "grm"
 version = "0.1.0"
-authors = ["Julian Didier <did.julian@gmail.com>"]
+authors = ["Julian Didier (theredfish) <did.julian@gmail.com>"]
 
 [dependencies]
