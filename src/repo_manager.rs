@@ -1,4 +1,7 @@
 use glob::glob;
+use std::result::Result;
+
+// TODO : Check for a database integration first! (SQLITE)
 
 #[derive(Debug)]
 pub enum GitRepo {
@@ -19,19 +22,40 @@ impl GitRepo {
     }
 }
 
-// TODO update repositories by a Vec<Repository>
-fn add(repositories: Vec<String>) {
-    println!("You're in the \"add\" fn");
+#[derive(Debug)]
+struct Repository {
+    name: String,
+    path: String,
 }
 
-// TODO return Vec<Repository>
-fn search(pattern_path: &String) -> Vec<String> {
-    let repositories: Vec<String> = Vec::new();
-
-    for entry in glob(pattern_path).unwrap() {
-        if let Ok(pattern_path) = entry {
-            println!("{:?}", pattern_path.display())
+impl Repository {
+    fn new(name: String, path: String) -> Repository {
+        Repository {
+            name: name,
+            path: path,
         }
+    }
+}
+
+// TODO add repos to SQLite DB and make a report for added / skipped (with reason) repos
+fn add(repositories: Vec<Repository>) {
+    for i in 0..repositories.len() {
+        println!("{:?}", repositories[i]);
+    }
+}
+
+// TODO see if it's possible to exclude folders (node_modules, ...)
+fn search(pattern: &String) -> Vec<Repository> {
+    let mut repositories: Vec<Repository> = Vec::new();
+
+    // TODO handle error cases for paths (parent is root path, bad path, ...)
+    for path in glob(pattern).unwrap().filter_map(Result::ok) {
+        let str_path = path.as_path().to_str().unwrap();
+        let parent = path.parent().unwrap();
+        let name = parent.iter().last().unwrap().to_str().unwrap();
+
+        let repo = Repository::new(String::from(name), String::from(str_path));
+        repositories.push(repo);
     }
 
     repositories
