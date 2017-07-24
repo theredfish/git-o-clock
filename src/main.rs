@@ -4,8 +4,8 @@ use std::env;
 use std::process;
 use std::path::Path;
 
-use grm::Config;
-use grm::RepoManager;
+use grm::cmd_parser::Config;
+use grm::repo_manager::GitRepo;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -26,7 +26,7 @@ fn main() {
 
 fn run(config: Config) {
     match config.query.as_ref() {
-        "add" => RepoManager::Add(String::from(config.path)).call(),
+        "add" => GitRepo::Add(String::from(config.path)).call(),
         _ => {
             println!("{} : command not found", config.query);
             process::exit(1);
