@@ -5,3 +5,7 @@ authors = ["Julian Didier (theredfish) <did.julian@gmail.com>"]
 
 [dependencies]
 glob = "0.2.11"
+
+[dependencies.rusqlite]
+version = "0.12.0"
+features = ["bundled"]
