@@ -6,8 +6,14 @@ use std::path::Path;
 
 use grm::cmd_parser::Config;
 use grm::repo_manager::GitRepo;
+use grm::database::SQLite;
 
 fn main() {
+    let db = SQLite::new().unwrap_or_else(|err| {
+        println!("SQLite database error : {} ", err);
+        process::exit(1);
+    });
+
     let args: Vec<String> = env::args().collect();
     let config = Config::new(&args).unwrap_or_else(|err| {
         println!("Problem parsing arguments: {}", err);
