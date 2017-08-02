@@ -1,15 +1,17 @@
 extern crate grm;
+extern crate rusqlite;
 
+use rusqlite::Connection;
 use std::env;
 use std::process;
 use std::path::Path;
 
 use grm::cmd_parser::Config;
 use grm::repo_manager::GitRepo;
-use grm::database::SQLite;
+use grm::db;
 
 fn main() {
-    let db = SQLite::new().unwrap_or_else(|err| {
+    let conn = db::initialize_connection().unwrap_or_else(|err| {
         println!("SQLite database error : {} ", err);
         process::exit(1);
     });
@@ -27,12 +29,15 @@ fn main() {
 
     }*/
 
-    run(config);
+    run(conn, config);
 }
 
-fn run(config: Config) {
+fn run(conn: Connection, config: Config) {
+    let pattern = String::from("/**/*.git");
+    let git_repo = GitRepo::new(conn, pattern);
+
     match config.query.as_ref() {
-        "add" => GitRepo::Add(String::from(config.path)).call(),
+        "add" => git_repo.add(String::from(config.path)),
         _ => {
             println!("{} : command not found", config.query);
             process::exit(1);
