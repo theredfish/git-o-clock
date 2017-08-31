@@ -1,19 +1,16 @@
 use glob::glob;
 use models::Repository;
-use rusqlite::Connection;
 use std::result::Result;
 
 #[derive(Debug)]
 pub struct GitRepo {
-    conn: Connection,
     pattern: String
 }
 
 // TODO see how to correctly handle db connection (trait with common fn for models?)
 impl GitRepo {
-    pub fn new(conn: Connection, pattern: String) -> GitRepo {
+    pub fn new(pattern: String) -> GitRepo {
         GitRepo {
-            conn: conn,
             pattern: String::from(pattern)
         }
     }
@@ -23,7 +20,7 @@ impl GitRepo {
         let git_repo_list = self.search(search);
 
         for i in 0..git_repo_list.len() {
-            git_repo_list[i].insert(&self.conn);
+            // TODO insert in db
         }
     }
 

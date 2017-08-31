@@ -1,3 +1,5 @@
 .idea
+.env
 target
-grm_db
+grm.sqlite3
+Cargo.lock

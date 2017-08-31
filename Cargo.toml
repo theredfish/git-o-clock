@@ -5,7 +5,7 @@ authors = ["Julian Didier (theredfish) <did.julian@gmail.com>"]
 
 [dependencies]
 glob = "0.2.11"
-
-[dependencies.rusqlite]
-version = "0.12.0"
-features = ["bundled"]
+diesel = { version = "0.15.0", features = ["sqlite"] }
+diesel_codegen = { version = "0.15.0", features = ["sqlite"] }
+dotenv = "0.9.0"
+libsqlite3-sys = { version = ">=0.8.0, <0.9.0", features = ["min_sqlite_version_3_7_16", "bundled"] }

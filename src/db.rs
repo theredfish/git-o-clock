@@ -1,13 +1,14 @@
-use rusqlite::Connection;
-use rusqlite::Error;
+use diesel::prelude::*;
+use diesel::sqlite::SqliteConnection;
+use dotenv::dotenv;
+use std::env;
 
-pub fn initialize_connection() -> Result<Connection, Error> {
-    let conn = Connection::open("grm_db")?;
-    Ok(conn)
+pub fn establish_connection() -> SqliteConnection {
+    dotenv().ok();
+
+    let database_url = env::var("DATABASE_URL")
+        .expect("DATABASE_URL must be set");
+
+    SqliteConnection::establish(&database_url)
+        .expect(&format!("Error connecting to {}", database_url))
 }
-
-// TODO
-pub fn create_repository_table() {
-    println!("Create repo table");
-}
-

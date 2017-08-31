@@ -1,5 +1,3 @@
-use rusqlite::Connection;
-
 #[derive(Debug)]
 pub struct Repository {
     pub name: String,
@@ -13,10 +11,4 @@ impl Repository {
             path: path
         }
     }
-
-    // TODO implementation + return created repo
-    pub fn insert(&self, conn: &Connection) {
-        println!("in insert");
-    }
-
 }
