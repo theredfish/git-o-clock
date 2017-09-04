@@ -1,4 +1,5 @@
 CREATE TABLE repositories (
-  name TEXT,
-  path TEXT
+  id INTEGER NOT NULL PRIMARY KEY,
+  name VARCHAR NOT NULL UNIQUE,
+  path VARCHAR NOT NULL
 )
