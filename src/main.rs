@@ -1,37 +1,45 @@
 extern crate grm;
+extern crate clap;
 
-use std::env;
-use std::process;
-
-use grm::cmd_parser::Config;
-use grm::repo_manager::GitRepo;
+use clap::{Arg, App, ArgMatches, SubCommand};
+use grm::repo_manager::{add, list};
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let config = Config::new(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {}", err);
-        process::exit(1);
-    });
+    let cmd = App::new("Git Repository Manager")
+        .version("0.1.0")
+        .author("Julian Didier (theredfish)")
+        .about("Git Repository Manager (GRM) helps manage GIT repositories from your terminal.")
+        .subcommand(SubCommand::with_name("add")
+            .about("Search and add your git repositories for a given path; default path is the \
+            current directory")
+            .arg(Arg::with_name("path")
+                .value_name("PATH")
+                .help("A relative / absolute path or a directory hierarchy.")
+                .takes_value(true)))
+        .subcommand(SubCommand::with_name("list")
+            .about("List your saved repositories for the given pattern")
+            .arg(Arg::with_name("pattern")
+                .value_name("PATTERN")
+                .help("The pattern to apply")
+                .takes_value(true)))
+        .get_matches();
 
-    // TODO check if the path exists before to continue
-
-    /*let path_exists = Path::new(config.path).exists();
-    match false {
-
-    }*/
-
-    run(config);
+    run(cmd)
 }
 
-fn run(config: Config) {
-    let pattern = String::from("/**/*.git");
-    let git_repo = GitRepo::new(pattern);
-
-    match config.query.as_ref() {
-        "add" => git_repo.add(String::from(config.path)),
-        _ => {
-            println!("{} : command not found", config.query);
-            process::exit(1);
+fn run(cmd : ArgMatches) {
+    match cmd.subcommand() {
+        ("add", Some(add_matches)) => {
+            let git_pattern = String::from("/**/*.git");
+            let add_path = add_matches.value_of("path").unwrap_or(".");
+            add(String::from(add_path), git_pattern);
         },
+        ("list", Some(list_matches)) => list(),
+        ("", None)           => {
+            eprintln!("error : not enough argument. ");
+            println!("{}", cmd.usage());
+            println!("For more information try --help");
+        },
+        _                   => unreachable!()
     }
 }
