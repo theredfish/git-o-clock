@@ -5,12 +5,14 @@ use diesel::prelude::*;
 use diesel::result::Error;
 
 #[derive(Queryable)]
+#[derive(Debug)]
 pub struct Repository {
     pub name: String,
     pub path: String
 }
 
 #[derive(Insertable)]
+#[derive(Debug)]
 #[table_name="repositories"]
 pub struct NewRepository{
     pub name: String,
@@ -20,8 +22,8 @@ pub struct NewRepository{
 impl NewRepository {
     pub fn new(name: String, path: String) -> NewRepository {
         NewRepository {
-            name: name,
-            path: path
+            name,
+            path
         }
     }
 }
@@ -31,7 +33,6 @@ pub fn create_repository<'a>(new_repository: &'a NewRepository) -> Result<Reposi
 
     let connection = establish_connection();
 
-    // continue or return Error
     diesel::insert(new_repository)
         .into(repositories::table)
         .execute(&connection)?;
@@ -41,4 +42,12 @@ pub fn create_repository<'a>(new_repository: &'a NewRepository) -> Result<Reposi
     repositories::table
         .find(&new_repository.name)
         .first(&connection)
+}
+
+pub fn get_repositories() -> Result<Vec<Repository>, Error> {
+    let connection = establish_connection();
+
+    repositories::table
+        .load::<Repository>(&connection)
+
 }

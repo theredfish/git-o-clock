@@ -1,67 +1,52 @@
 use glob::glob;
 use models::*;
-use std::fs;
-use std::result::Result;
+use dunce;
+use diesel::result::Error::DatabaseError;
+use diesel::result::DatabaseErrorKind::UniqueViolation;
 
-#[derive(Debug)]
-pub struct GitRepo {
-    pattern: String
+pub fn add(path: String, term: String) {
+    let found_repos = search(with_pattern, path, term);
+
+    for repo in found_repos {
+        match create_repository(&repo) {
+            Ok(inserted_repo) => println!("✓ {}", inserted_repo.name),
+            Err(DatabaseError(UniqueViolation, _)) => eprintln!("✗ {} : name already exists", repo.name),
+            Err(e) => eprintln!("✗ {}: {}", repo.name, e)
+        };
+    }
 }
 
-impl GitRepo {
-    pub fn new(pattern: String) -> GitRepo {
-        GitRepo {
-            pattern: String::from(pattern)
-        }
-    }
-
-    pub fn add(&self, path: String) {
-        let pattern = path.to_string() + &self.pattern.to_string();
-        let repositories = self.search(pattern);
-
-        println!("\nAdding your repositories...\n");
-
-        for new_repo in repositories {
-            let repo = create_repository(&new_repo);
-
-            // TODO : Handle unique contraint error and display it
-            // in a more user friendly way
-            // See https://github.com/diesel-rs/diesel/blob/73778af0827cb066bf1efdb348f380da14c916d4/diesel_tests/tests/errors.rs
-            match repo {
-                Ok(repo) => println!("-> {}", repo.name),
-                Err(err) => {
-                    println!("Can't save a repository {}", err);
-                    continue;
-                }
+pub fn list() {
+    match get_repositories() {
+        Ok(repos) => {
+            for repo in repos {
+                println!("{}", repo.name)
             }
         }
+        Err(e) => eprintln!("Cannot list repositories : {}", e)
+    }
+}
+
+fn search<F: Fn(String, String) -> String>(f: F, path: String, pattern: String) -> Vec<NewRepository> {
+    let path_pattern = f(path, pattern);
+    let mut repositories: Vec<NewRepository> = Vec::new();
+
+    println!("Please wait, I'm scanning your projects...");
+
+    for path in glob(&path_pattern).unwrap().filter_map(Result::ok) {
+        let absolute_path = dunce::canonicalize(path).unwrap();
+        let parent = absolute_path.parent().unwrap();
+        let name = parent.iter().last().unwrap().to_str().unwrap();
+        let path = parent.to_str().unwrap();
+
+        let repo = NewRepository::new(String::from(name), String::from(path));
+        repositories.push(repo);
     }
 
-    fn search(&self, pattern: String) -> Vec<NewRepository> {
-        let mut repositories: Vec<NewRepository> = Vec::new();
+    repositories
+}
 
-        println!("I'm searching into these repositories :\n");
-
-        for path in glob(&pattern).unwrap().filter_map(Result::ok) {
-            let absolute_path = match fs::canonicalize(path) {
-                Ok(canonicalized_path) => canonicalized_path,
-                Err(_) => continue
-            };
-
-            let parent = absolute_path.parent().unwrap();
-            let name = parent.iter().last().unwrap().to_str().unwrap();
-            let parent_path: Vec<&str> = parent.to_str().unwrap().split(".git").collect();
-            let path = parent_path[0];
-            println!("{:?}", path);
-
-            let repo = NewRepository::new(
-                String::from(name),
-                String::from(path)
-            );
-
-            repositories.push(repo);
-        }
-
-        repositories
-    }
+fn with_pattern(path: String, pattern: String) -> String {
+    let path_pattern = path.to_string() + &pattern.to_string();
+    String::from(path_pattern)
 }
