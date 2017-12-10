@@ -2,7 +2,7 @@ extern crate grm;
 extern crate clap;
 
 use clap::{Arg, App, ArgMatches, SubCommand};
-use grm::repo_manager::{add, list};
+use grm::repo_manager::{add, list, goto};
 
 fn main() {
     let cmd = App::new("Git Repository Manager")
@@ -22,6 +22,12 @@ fn main() {
                 .value_name("PATTERN")
                 .help("The pattern to apply")
                 .takes_value(true)))
+        .subcommand(SubCommand::with_name("goto")
+            .about("Go to the repository directory")
+            .arg(Arg::with_name("repo_name")
+                .value_name("REPOSITORY_NAME")
+                .help("The repository name")
+                .takes_value(true)))
         .get_matches();
 
     run(cmd)
@@ -33,6 +39,11 @@ fn run(cmd : ArgMatches) {
             let git_pattern = String::from("/**/*.git");
             let add_path = add_matches.value_of("path").unwrap_or(".");
             add(String::from(add_path), git_pattern);
+        },
+        ("goto", Some(goto_matches)) => {
+            if let Some(repo_name) = goto_matches.value_of("repo_name") {
+                goto(String::from(repo_name));
+            }
         },
         ("list", Some(list_matches)) => list(),
         ("", None)           => {
