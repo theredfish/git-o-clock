@@ -2,12 +2,13 @@ use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use std::env;
 use std::process;
+use std::path::Path;
 
 pub fn establish_connection() -> SqliteConnection {
     let exe_path = match env::current_exe() {
         Ok(exe_path) => exe_path,
         Err(e) => {
-            eprintln!("failed to get grm.exe path: {}", e);
+            eprintln!("Failed to find the path to the executable : {}", e);
             process::exit(1);
         }
     };
@@ -15,12 +16,19 @@ pub fn establish_connection() -> SqliteConnection {
     let exe_dir = match exe_path.parent() {
         Some(dir) => dir,
         None => {
-            eprintln!("Failed to get grm.exe installation folder");
+            eprintln!("Failed to find the the path to the installation folder");
             process::exit(1);
         }
     };
 
     let key = "DATABASE_URL";
+    let db_file = exe_dir.join("grm.sqlite3");
+
+    if !Path::new(&db_file).exists() {
+        eprintln!("Database file not found");
+        process::exit(1);
+    }
+
     env::set_var(key, exe_dir.join("grm.sqlite3"));
 
     let database_url = env::var("DATABASE_URL")
