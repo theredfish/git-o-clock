@@ -3,6 +3,7 @@ use models::*;
 use dunce;
 use diesel::result::Error::DatabaseError;
 use diesel::result::DatabaseErrorKind::UniqueViolation;
+use std::path::Path;
 
 pub fn add(path: String, term: String) {
     let found_repos = search(with_pattern, path, term);
@@ -33,7 +34,10 @@ pub fn list() {
 
 pub fn goto(repo_name: String) {
     match get_repository(repo_name) {
-        Ok(repo) => println!("{}", repo.path),
+        Ok(repo) => {
+            let p = Path::new(&repo.path);
+            println!("{}", p.display())
+        },
         Err(e) => eprintln!("Cannot retrieve the repository : {} (╯°□°)╯ ┻━┻", e)
     }
 }

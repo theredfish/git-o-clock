@@ -5,13 +5,19 @@ GRM=${script_dir}/grm
 if [ "$#" = 0 ]; then
   ${GRM} -h
 else
-    case $1 in
-      goto)
-        repo_path=`${GRM} goto $2`
+  # handle spaces
+  arg_value="${@:2:$#}"
+
+  case $1 in
+    goto)
+      repo_path=`${GRM} goto "$arg_value"`
+
+      if [ -n "$repo_path" ]; then
         cd "$repo_path"
-      ;;
-      *)
-        ${GRM} $1 $2
-      ;;
-    esac
+      fi
+    ;;
+    *)
+      ${GRM} $1 "$arg_value"
+    ;;
+  esac
 fi
