@@ -6,20 +6,21 @@ Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works)
 # Status
 This project is work in progress, here a list of features :
 
-[ x ] add repositories
-[ x ] list repositories
-[ x ] change directory for a given repository name
-[  ] remove repositories
-[  ] update repositories (name and path)
-[ x ] automatic migrations
-[  ] categorize repositories
-[  ] list repositories with filters / pattern
 
-[  ] installation script
-[  ] auto-completion on repositories name
+- [x] add repositories
+- [x] list repositories
+- [x] change directory for a given repository name
+- [ ] remove repositories
+- [ ] update repositories (name and path)
+- [x] automatic migrations
+- [ ] categorize repositories
+- [ ] list repositories with filters / pattern
+- [ ] installation script
+- [ ] auto-completion on repositories name
 
 Not sure :
-[  ] implement [tui-rs](https://github.com/fdehau/tui-rs) or [termion](https://github.com/ticki/termion) : wait for a Windows implementation (see [termion issue "interest in windows port"](https://github.com/ticki/termion/issues/103))
+
+- [ ] implement [tui-rs](https://github.com/fdehau/tui-rs) or [termion](https://github.com/ticki/termion) : wait for a Windows implementation (see [termion issue "interest in windows port"](https://github.com/ticki/termion/issues/103))
 
 # Getting started [WIP]
 Waiting the final installation process, you can use the following steps to install GRM :
