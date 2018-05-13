@@ -1,5 +1,8 @@
-use schema::repositories;
+embed_migrations!("migrations");
+
 use db::establish_connection;
+use std::io::stdout;
+use super::schema::repositories;
 use diesel;
 use diesel::prelude::*;
 use diesel::result::Error;
@@ -14,7 +17,7 @@ pub struct Repository {
 #[derive(Insertable)]
 #[derive(Debug)]
 #[table_name="repositories"]
-pub struct NewRepository{
+pub struct NewRepository {
     pub name: String,
     pub path: String
 }
@@ -28,12 +31,17 @@ impl NewRepository {
     }
 }
 
+pub fn run_pending_migrations() {
+    let connection = establish_connection();
+    embedded_migrations::run_with_output(&connection, &mut stdout());
+}
+
 pub fn create_repository<'a>(new_repository: &'a NewRepository) -> Result<Repository, Error> {
     use schema::repositories::dsl::*;
     let connection = establish_connection();
 
-    diesel::insert(new_repository)
-        .into(repositories)
+    diesel::insert_into(repositories)
+        .values(new_repository)
         .execute(&connection)?;
 
     // Get the last inserted repository
