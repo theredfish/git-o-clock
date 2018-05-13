@@ -5,16 +5,21 @@ use diesel::result::Error::DatabaseError;
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use std::path::Path;
 
+pub fn update_grm() {
+    run_pending_migrations()
+}
+
+
 pub fn add(path: String, term: String) {
     let found_repos = search(with_pattern, path, term);
 
-    for repo in found_repos {
-        match create_repository(&repo) {
-            Ok(inserted_repo) => println!("✓ {}", inserted_repo.name),
-            Err(DatabaseError(UniqueViolation, _)) => eprintln!("✗ {} : name already exists", repo.name),
-            Err(e) => eprintln!("✗ Cannot create the repository {} : {}", repo.name, e)
-        };
-    }
+   for repo in found_repos {
+       match create_repository(&repo) {
+           Ok(inserted_repo) => println!("-> {}", inserted_repo.name),
+           Err(DatabaseError(UniqueViolation, _)) => eprintln!("{} : name already exists", repo.name),
+           Err(e) => eprintln!("Cannot create the repository {} : {}", repo.name, e)
+       };
+   }
 }
 
 pub fn list() {
@@ -25,7 +30,7 @@ pub fn list() {
                     println!("{}", repo.name)
                 }
             } else {
-                println!("No repository found. Tell me to add more and I will execute (⌐■_■)");
+                println!("No repository found. Tell me to add more and I will execute.");
             }
         }
         Err(e) => eprintln!("Cannot list repositories : {}", e)
@@ -35,10 +40,9 @@ pub fn list() {
 pub fn goto(repo_name: String) {
     match get_repository(repo_name) {
         Ok(repo) => {
-            let p = Path::new(&repo.path);
-            println!("{}", p.display())
+            println!("{}", Path::new(&repo.path).display())
         },
-        Err(e) => eprintln!("Cannot retrieve the repository : {} (╯°□°)╯ ┻━┻", e)
+        Err(e) => eprintln!("Cannot retrieve the repository : {}", e)
     }
 }
 
@@ -46,7 +50,7 @@ fn search<F: Fn(String, String) -> String>(f: F, path: String, pattern: String) 
     let path_pattern = f(path, pattern);
     let mut repositories: Vec<NewRepository> = Vec::new();
 
-    println!("Please wait, I'm scanning your projects (ಠ_x) ༼☉");
+    println!("Please wait, I'm scanning your projects...");
 
     for path in glob(&path_pattern).unwrap().filter_map(Result::ok) {
         let absolute_path = dunce::canonicalize(path).unwrap();

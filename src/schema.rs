@@ -1,1 +1,6 @@
-infer_schema!("dotenv:DATABASE_URL");
+table! {
+	repositories(name) {
+		name -> Text,
+		path -> Text,
+	}
+}

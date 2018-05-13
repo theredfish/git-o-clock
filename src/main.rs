@@ -2,7 +2,7 @@ extern crate grm;
 extern crate clap;
 
 use clap::{Arg, App, ArgMatches, SubCommand};
-use grm::repo_manager::{add, list, goto};
+use grm::repo_manager::{add, list, goto, update_grm};
 
 fn main() {
     let cmd = App::new("Git Repository Manager")
@@ -34,6 +34,8 @@ fn main() {
 }
 
 fn run(cmd : ArgMatches) {
+    update_grm();
+
     match cmd.subcommand() {
         ("add", Some(add_matches)) => {
             let git_pattern = String::from("/**/*.git");
