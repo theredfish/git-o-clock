@@ -6,6 +6,7 @@ use super::schema::repositories;
 use diesel;
 use diesel::prelude::*;
 use diesel::result::Error;
+use diesel_migrations::RunMigrationsError;
 
 #[derive(Queryable)]
 #[derive(Debug)]
@@ -31,9 +32,9 @@ impl NewRepository {
     }
 }
 
-pub fn run_pending_migrations() {
+pub fn run_pending_migrations() -> Result<(), RunMigrationsError> {
     let connection = establish_connection();
-    embedded_migrations::run_with_output(&connection, &mut stdout());
+    embedded_migrations::run_with_output(&connection, &mut stdout())
 }
 
 pub fn create_repository<'a>(new_repository: &'a NewRepository) -> Result<Repository, Error> {
