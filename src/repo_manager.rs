@@ -6,7 +6,10 @@ use diesel::result::DatabaseErrorKind::UniqueViolation;
 use std::path::Path;
 
 pub fn update_grm() {
-    run_pending_migrations()
+    if let Err(e) = run_pending_migrations() {
+        eprintln!("GRM update failed : {}", e);
+        eprintln!("Please open an issue with your output : https://github.com/theredfish/git-repo-manager/issues/new");
+    }
 }
 
 
