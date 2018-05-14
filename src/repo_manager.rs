@@ -12,7 +12,6 @@ pub fn update_grm() {
     }
 }
 
-
 pub fn add(path: String, term: String) {
     let found_repos = search(with_pattern, path, term);
 
