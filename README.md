@@ -1,7 +1,6 @@
-# git-repo-manager
+# Git Repository Manager
 GRM : A light git repository manager written in Rust for use in terminal.
-
-Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works)
+Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works).
 
 # Status
 This project is work in progress, here the list of expected features :
