@@ -39,10 +39,15 @@ pub fn list() {
 
 pub fn goto(repo_name: String) {
     match get_repository(repo_name) {
-        Ok(repo) => {
-            println!("{}", Path::new(&repo.path).display())
-        },
+        Ok(repo) => println!("{}", Path::new(&repo.path).display()),
         Err(e) => eprintln!("Cannot retrieve the repository : {}", e)
+    }
+}
+
+pub fn rm(repo_name: String) {
+    match remove_repository(repo_name) {
+        Ok(count) => println!("{:?} project(s) removed", count),
+        Err(e) => eprintln!("Cannot remove the repository : {}", e)
     }
 }
 
