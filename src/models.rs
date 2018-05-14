@@ -65,3 +65,12 @@ pub fn get_repository(repo_name: String) -> Result<Repository, Error> {
 
     repositories.find(&repo_name).first(&connection)
 }
+
+pub fn remove_repository(repo_name: String) -> Result<usize, Error> {
+    use schema::repositories::dsl::*;
+    let connection  = establish_connection();
+
+    diesel::delete(repositories)
+        .filter(name.eq(repo_name))
+        .execute(&connection)
+}
