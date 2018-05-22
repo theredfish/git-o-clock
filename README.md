@@ -2,6 +2,22 @@
 GRM : A light git repository manager written in Rust for use in terminal.
 Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works).
 
+```
+USAGE:
+    grm(.exe) [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    add     Search and add your git repositories for a given path; default path is the current directory
+    goto    Go to the repository directory
+    help    Prints this message or the help of the given subcommand(s)
+    list    List your saved repositories for the given pattern
+    rm      Remove a git repository from the list
+```
+
 # Status
 This project is work in progress, here the list of expected features :
 
@@ -25,18 +41,67 @@ Not sure :
 # Getting started [WIP]
 Waiting the final installation process, you can use the following steps to install GRM :
 
-First clone the repository and build the project (with cargo or rustc, it's up to you) :
+## Setup
+
+- Clone the repository and build the project (with cargo or rustc, it's up to you) :
 ```
 git clone git@github.com:theredfish/git-repo-manager.git
 cargo build --release
-
-# grm or grm.exe
-./target/debug/grm
 ```
 
-Then, because `cd` is a built-in command, we need to use a wrapper.
-
-Under Windows, see DOSKEY to make an alias like Linux, or just execute the given script :
+- Setup your installation folder, move build files into and create your database file :
 ```
-[TODO]
+mkdir ~/.grm
+
+# grm.sh for Linux or grm.ps1 for Windows
+cp ./target/release/grm.sh ~/.grm
+
+# On Windows : powershell.exe New-Item ~/.grm/grm.sqlite3 -ItemType file
+touch ~/.grm/grm.sqlite3
+```
+
+## Alias
+
+### Windows
+
+Under Windows you need to be prepared by creating a guild, finishing 100 quests and killing 42 bosses. More information [here](https://stackoverflow.com/questions/24914589/how-to-create-permanent-powershell-aliases#29806921).
+
+- First you need to change your execution policy :
+```
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+- Next, create your Windows Powershell profile if doesn't exist :
+```
+# Microsoft.PowerShell_profile.ps1 already exists
+cd $env:USERPROFILE\Documents
+md WindowsPowerShell
+cd WindowsPowerShell
+New-Item Microsoft.PowerShell_profile.ps1 -ItemType "file"
+```
+
+- Then edit `Microsoft.PowerShell_profile.ps1` to add your alias :
+```
+# You must split args one by one, grm can handle two arguments
+function GrmCall {
+    ~/.grm/grm.ps1 $args[0] $args[1]
+}
+
+Set-Alias grm GrmCall
+```
+
+- Finally source your profile :
+```
+. $PROFILE
+```
+
+Now you are a warrior ... or a paladin since you won +100 in intelligence \*wink wink nudge nudge\*
+
+### Linux
+With Linux, it's like a butterfly hunt. It's relaxing.
+
+```
+# Edit your ~/.bashrc or your ~/.bash_aliases with this line
+alias grm='~/.grm/grm'
+source ~/.bashrc
 ```
