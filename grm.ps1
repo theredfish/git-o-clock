@@ -36,4 +36,3 @@ if ($args.Count -eq 0) {
         }
     }
 }
-
