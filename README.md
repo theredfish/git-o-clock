@@ -104,8 +104,8 @@ With Linux, it's like a butterfly hunt. It's relaxing.
 
 ```
 # Edit your ~/.bashrc or your ~/.bash_aliases with this line
-alias grm='source ~/.grm/grm.sh'
+alias grm='source ~/.grm/grm'
 
-# Reload bashrc
+# Reload your bashrc
 source ~/.bashrc
 ```
