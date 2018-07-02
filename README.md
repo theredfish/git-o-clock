@@ -46,6 +46,7 @@ Waiting the final installation process, you can use the following steps to insta
 - Clone the repository and build the project (with cargo or rustc, it's up to you) :
 ```
 git clone git@github.com:theredfish/git-repo-manager.git
+cd git-repo-manager
 cargo build --release
 ```
 
@@ -54,7 +55,8 @@ cargo build --release
 mkdir ~/.grm
 
 # grm.sh for Linux or grm.ps1 for Windows
-cp ./target/release/grm.sh ~/.grm
+cp grm.sh ~/.grm
+cp target/release/grm ~/.grm
 
 # On Windows : powershell.exe New-Item ~/.grm/grm.sqlite3 -ItemType file
 touch ~/.grm/grm.sqlite3
@@ -102,6 +104,8 @@ With Linux, it's like a butterfly hunt. It's relaxing.
 
 ```
 # Edit your ~/.bashrc or your ~/.bash_aliases with this line
-alias grm='~/.grm/grm'
+alias grm='source ~/.grm/grm.sh'
+
+# Reload bashrc
 source ~/.bashrc
 ```

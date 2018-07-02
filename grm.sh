@@ -1,5 +1,5 @@
 #!/bin/bash
-script_dir=`dirname $0`
+script_dir=${BASH_SOURCE[0]%/*}
 GRM=${script_dir}/grm
 
 if [ "$#" = 0 ]; then
