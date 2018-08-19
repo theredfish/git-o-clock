@@ -21,6 +21,7 @@ SUBCOMMANDS:
 # Status
 This project is work in progress, here the list of expected features :
 
+- [ ] use [r2d2](https://github.com/sfackler/r2d2) : set of open db connections for repeated use
 - [x] add repositories
 - [x] list repositories
 - [x] change directory for a given repository name
