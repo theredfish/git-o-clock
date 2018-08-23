@@ -1,4 +1,6 @@
 # Git Repository Manager
+> Please note that I'm currently working on this project but my time is very limited at the moment. If you're interested by the project let me know, I'm looking for contributions! You can take a task from the Status section, create a PR and start coding. Thank you!
+
 GRM : A light git repository manager written in Rust for use in terminal.
 Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works).
 
@@ -19,9 +21,10 @@ SUBCOMMANDS:
 ```
 
 # Status
+{#status}
 This project is work in progress, here the list of expected features :
 
-- [ ] use [r2d2](https://github.com/sfackler/r2d2) : set of open db connections for repeated use
+
 - [x] add repositories
 - [x] list repositories
 - [x] change directory for a given repository name
@@ -36,7 +39,7 @@ This project is work in progress, here the list of expected features :
 - [x] grm bash script wrapper for built-in commands
 
 Not sure :
-
+- [ ] use [r2d2](https://github.com/sfackler/r2d2) : set of open db connections for repeated use
 - [ ] implement [tui-rs](https://github.com/fdehau/tui-rs) or [termion](https://github.com/ticki/termion) : wait for a Windows implementation (see [termion issue "interest in windows port"](https://github.com/ticki/termion/issues/103))
 
 # Getting started [WIP]
