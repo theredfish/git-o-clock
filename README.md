@@ -21,7 +21,6 @@ SUBCOMMANDS:
 ```
 
 # Status
-{#status}
 This project is work in progress, here the list of expected features :
 
 
