@@ -1,8 +1,8 @@
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use std::env;
-use std::process;
 use std::path::Path;
+use std::process;
 
 pub fn establish_connection() -> SqliteConnection {
     let exe_path = match env::current_exe() {
@@ -31,8 +31,7 @@ pub fn establish_connection() -> SqliteConnection {
 
     env::set_var(key, exe_dir.join("grm.sqlite3"));
 
-    let database_url = env::var("DATABASE_URL")
-        .expect("DATABASE_URL must be set");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
     SqliteConnection::establish(&database_url)
         .expect(&format!("Error connecting to {}", database_url))
