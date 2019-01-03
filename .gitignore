@@ -3,3 +3,4 @@
 target
 grm.sqlite3
 Cargo.lock
+.vscode
