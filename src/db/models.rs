@@ -1,12 +1,8 @@
-embed_migrations!("migrations");
-
 use crate::db::establish_connection;
-use crate::schema::repositories;
+use crate::db::schema::repositories;
 use diesel;
 use diesel::prelude::*;
 use diesel::result::Error;
-use diesel_migrations::RunMigrationsError;
-use std::io::stdout;
 
 #[derive(Queryable, Debug)]
 pub struct Repository {
@@ -27,13 +23,8 @@ impl NewRepository {
     }
 }
 
-pub fn run_pending_migrations() -> Result<(), RunMigrationsError> {
-    let connection = establish_connection();
-    embedded_migrations::run_with_output(&connection, &mut stdout())
-}
-
 pub fn create_repository<'a>(new_repository: &'a NewRepository) -> Result<Repository, Error> {
-    use crate::schema::repositories::dsl::*;
+    use crate::db::schema::repositories::dsl::*;
     let connection = establish_connection();
 
     diesel::insert_into(repositories)
@@ -46,21 +37,21 @@ pub fn create_repository<'a>(new_repository: &'a NewRepository) -> Result<Reposi
 }
 
 pub fn get_repositories() -> Result<Vec<Repository>, Error> {
-    use crate::schema::repositories::dsl::*;
+    use crate::db::schema::repositories::dsl::*;
     let connection = establish_connection();
 
     repositories.load::<Repository>(&connection)
 }
 
 pub fn get_repository(repo_name: String) -> Result<Repository, Error> {
-    use crate::schema::repositories::dsl::*;
+    use crate::db::schema::repositories::dsl::*;
     let connection = establish_connection();
 
     repositories.find(&repo_name).first(&connection)
 }
 
 pub fn remove_repository(repo_name: String) -> Result<usize, Error> {
-    use crate::schema::repositories::dsl::*;
+    use crate::db::schema::repositories::dsl::*;
     let connection = establish_connection();
 
     diesel::delete(repositories)

@@ -1,16 +1,9 @@
-use crate::models::*;
+use crate::db::models::*;
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::DatabaseError;
 use dunce;
 use glob::glob;
 use std::path::Path;
-
-pub fn update_db() {
-    if let Err(e) = run_pending_migrations() {
-        eprintln!("GRM update failed : {}", e);
-        eprintln!("Please open an issue with your output : https://github.com/theredfish/git-repo-manager/issues/new");
-    }
-}
 
 pub fn add(path: String, term: String) {
     let found_repos = search(with_pattern, path, term);

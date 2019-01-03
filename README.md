@@ -23,21 +23,32 @@ SUBCOMMANDS:
 # Status
 This project is work in progress, here the list of expected features :
 
-
+## must-have features
 - [x] add repositories
 - [x] list repositories
 - [x] change directory for a given repository name
 - [x] remove repository
+- [ ] clean dead repositories
 - [ ] update repositories (name and path)
-- [x] automatic migrations
-- [ ] categorize repositories
 - [ ] list repositories with filters / pattern
+- [ ] auto-completion on repositories' name
+
+## nice-to-have features
+- [ ] categorize repositories
 - [ ] installation script
-- [ ] auto-completion on repositories name
+
+## migrations and updates
+- [x] automatic migrations
+- [ ] replace the automatic migrations with a prompt to ask if the user want to make the update
+- [ ] always make a save of `grm.sqlite3` before a migration
+- [ ] if a migration fails, restore the previous version
+
+## system wrappers
 - [x] grm powershell script wrapper for built-in commands
 - [x] grm bash script wrapper for built-in commands
+- [ ] auto-completion binding
 
-Not sure :
+## not so sure :
 - [ ] use [r2d2](https://github.com/sfackler/r2d2) : set of open db connections for repeated use
 - [ ] implement [tui-rs](https://github.com/fdehau/tui-rs) or [termion](https://github.com/ticki/termion) : wait for a Windows implementation (see [termion issue "interest in windows port"](https://github.com/ticki/termion/issues/103))
 

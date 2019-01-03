@@ -1,8 +1,15 @@
+embed_migrations!("migrations");
+
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
+use diesel_migrations::RunMigrationsError;
 use std::env;
+use std::io::stdout;
 use std::path::Path;
 use std::process;
+
+pub mod models;
+pub mod schema;
 
 pub fn establish_connection() -> SqliteConnection {
     let exe_path = match env::current_exe() {
@@ -35,4 +42,9 @@ pub fn establish_connection() -> SqliteConnection {
 
     SqliteConnection::establish(&database_url)
         .expect(&format!("Error connecting to {}", database_url))
+}
+
+pub fn run_pending_migrations() -> Result<(), RunMigrationsError> {
+    let connection = establish_connection();
+    embedded_migrations::run_with_output(&connection, &mut stdout())
 }
