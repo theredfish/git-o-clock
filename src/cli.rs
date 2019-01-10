@@ -1,6 +1,6 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{App, Arg, SubCommand};
 
-pub fn init<'a>() -> ArgMatches<'a> {
+pub fn build_cli() -> App<'static, 'static> {
     App::new("Git Repository Manager")
         .version("0.1.0")
         .author("Julian Didier (theredfish)")
@@ -43,5 +43,12 @@ pub fn init<'a>() -> ArgMatches<'a> {
                         .help("The repository name")
                         .takes_value(true),
                 ),
-        ).get_matches()
+        ).subcommand(
+            SubCommand::with_name("completions")
+                .about("Generates completion scripts for your shell")
+                .arg(Arg::with_name("SHELL")
+                .required(true)
+                .possible_values(&["bash", "fish", "zsh"])
+                .help("The shell to generate the script for"))
+        )
 }

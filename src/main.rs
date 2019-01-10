@@ -5,7 +5,8 @@ extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
 
-use clap::ArgMatches;
+use clap::Shell;
+use std::io;
 use std::process;
 
 mod cli;
@@ -19,27 +20,37 @@ fn main() {
         process::exit(1);
     }
 
-    run(cli::init());
+    run();
 }
 
-fn run(matches: ArgMatches) {
+fn run() {
+    let matches = cli::build_cli().get_matches();
+
     match matches.subcommand() {
         ("add", Some(add_matches)) => {
             let git_pattern = String::from("/**/*.git");
             let add_path = add_matches.value_of("path").unwrap_or(".");
             grm::add(String::from(add_path), git_pattern);
-        }
+        },
         ("goto", Some(goto_matches)) => {
             if let Some(repo_name) = goto_matches.value_of("repo_name") {
                 grm::goto(String::from(repo_name));
             }
-        }
+        },
         ("list", Some(_)) => grm::list(),
         ("rm", Some(rm_matches)) => {
             if let Some(repo_name) = rm_matches.value_of("repo_name") {
                 grm::rm(String::from(repo_name));
             }
-        }
+        },
+        ("completions", Some(sub_matches)) => {
+            let shell = sub_matches.value_of("SHELL").unwrap();
+            cli::build_cli().gen_completions_to(
+                "grm",
+                Shell::Bash,
+                &mut io::stdout()
+            );
+        },
         ("", None) => {
             eprintln!("error : not enough argument. ");
             println!("{}", matches.usage());
