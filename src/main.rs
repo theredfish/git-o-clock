@@ -5,7 +5,8 @@ extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
 
-use clap::ArgMatches;
+use clap::Shell;
+use std::io;
 use std::process;
 
 mod cli;
@@ -19,10 +20,12 @@ fn main() {
         process::exit(1);
     }
 
-    run(cli::init());
+    run();
 }
 
-fn run(matches: ArgMatches) {
+fn run() {
+    let matches = cli::build_cli().get_matches();
+
     match matches.subcommand() {
         ("add", Some(add_matches)) => {
             let git_pattern = String::from("/**/*.git");
@@ -39,6 +42,9 @@ fn run(matches: ArgMatches) {
             if let Some(repo_name) = rm_matches.value_of("repo_name") {
                 grm::rm(String::from(repo_name));
             }
+        }
+        ("completions", Some(_)) => {
+            cli::build_cli().gen_completions_to("grm", Shell::Bash, &mut io::stdout());
         }
         ("", None) => {
             eprintln!("error : not enough argument. ");
