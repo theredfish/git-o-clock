@@ -31,26 +31,21 @@ fn run() {
             let git_pattern = String::from("/**/*.git");
             let add_path = add_matches.value_of("path").unwrap_or(".");
             grm::add(String::from(add_path), git_pattern);
-        },
+        }
         ("goto", Some(goto_matches)) => {
             if let Some(repo_name) = goto_matches.value_of("repo_name") {
                 grm::goto(String::from(repo_name));
             }
-        },
+        }
         ("list", Some(_)) => grm::list(),
         ("rm", Some(rm_matches)) => {
             if let Some(repo_name) = rm_matches.value_of("repo_name") {
                 grm::rm(String::from(repo_name));
             }
-        },
-        ("completions", Some(sub_matches)) => {
-            let shell = sub_matches.value_of("SHELL").unwrap();
-            cli::build_cli().gen_completions_to(
-                "grm",
-                Shell::Bash,
-                &mut io::stdout()
-            );
-        },
+        }
+        ("completions", Some(_)) => {
+            cli::build_cli().gen_completions_to("grm", Shell::Bash, &mut io::stdout());
+        }
         ("", None) => {
             eprintln!("error : not enough argument. ");
             println!("{}", matches.usage());

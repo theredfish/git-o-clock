@@ -1,6 +1,18 @@
 script_dir=${BASH_SOURCE[0]%/*}
 GRM=${script_dir}/grm
 
+complete_git_repos() {
+    repo_list=`${GRM} list`
+    repo_concat_list=""
+
+    for repo in ${repo_list}
+    do
+        repo_concat_list="${repo_concat_list} $repo"
+    done
+
+    echo ${repo_concat_list}
+}
+
 _grm() {
     local i cur prev opts cmds
     COMPREPLY=()
@@ -87,16 +99,8 @@ _grm() {
             ;;
         grm__goto)
             opts=" -h -V  --help --version "
-            fake_repo=" git-repo-manager git-workspace "
 
-            repo_list=`${GRM} list`
-            repo_concat_list=""
-
-            for repo in ${repo_list}
-            do
-                repo_concat_list="${repo_concat_list} $repo"
-            done
-
+            git_repo_list=$(complete_git_repos)
 
             # complete options
             if [[ ${cur} == -* ]] ; then
@@ -104,7 +108,7 @@ _grm() {
                 return 0
             # complete git repo names
             elif [[ ${cur} != -* && ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${repo_concat_list}" -- ${cur}) )
+                COMPREPLY=( $(compgen -W "${git_repo_list}" -- ${cur}) )
                 return 0
             fi
 
@@ -148,18 +152,26 @@ _grm() {
             return 0
             ;;
         grm__rm)
-            opts=" -h -V  --help --version  <REPOSITORY_NAME> "
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+            opts=" -h -V  --help --version "
+
+            git_repo_list=$(complete_git_repos)
+
+            # complete options
+            if [[ ${cur} == -* ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
                 return 0
+            # complete git repo names
+            elif [[ ${cur} != -* && ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${git_repo_list}" -- ${cur}) )
+                return 0
             fi
-            case "${prev}" in
 
+            case "${prev}" in
                 *)
                     COMPREPLY=()
                     ;;
             esac
-            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+
             return 0
             ;;
     esac

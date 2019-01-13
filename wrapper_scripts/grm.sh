@@ -2,10 +2,6 @@
 script_dir=${BASH_SOURCE[0]%/*}
 GRM=${script_dir}/grm
 
-# TODO : remove this source once the installation script is done.
-# TODO : Add this line to ~/.bashrc for example
-source ${script_dir}/grm.bash-completion.sh
-
 if [ "$#" = 0 ]; then
   ${GRM} -h
 else
