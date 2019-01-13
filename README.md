@@ -4,6 +4,8 @@
 GRM : A light git repository manager written in Rust for use in terminal.
 Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works).
 
+![Demo with bash](doc/demo_bash.gif)
+
 ```
 USAGE:
     grm(.exe) [SUBCOMMAND]
