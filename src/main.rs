@@ -28,9 +28,9 @@ fn run() {
 
     match matches.subcommand() {
         ("add", Some(add_matches)) => {
-            let git_pattern = String::from("/**/*.git");
+            let git_pattern = "/**/*.git";
             let add_path = add_matches.value_of("path").unwrap_or(".");
-            grm::add(String::from(add_path), git_pattern);
+            grm::add(add_path, git_pattern);
         }
         ("goto", Some(goto_matches)) => {
             if let Some(repo_name) = goto_matches.value_of("repo_name") {
