@@ -23,7 +23,7 @@ impl NewRepository {
     }
 }
 
-pub fn create_repository<'a>(new_repository: &'a NewRepository) -> Result<Repository, Error> {
+pub fn create_repository(new_repository: &NewRepository) -> Result<Repository, Error> {
     use crate::db::schema::repositories::dsl::*;
     let connection = establish_connection();
 
@@ -47,7 +47,7 @@ pub fn get_repository(repo_name: String) -> Result<Repository, Error> {
     use crate::db::schema::repositories::dsl::*;
     let connection = establish_connection();
 
-    repositories.find(&repo_name).first(&connection)
+    repositories.find(repo_name).first(&connection)
 }
 
 pub fn remove_repository(repo_name: String) -> Result<usize, Error> {

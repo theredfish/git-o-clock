@@ -5,7 +5,7 @@ use dunce;
 use glob::glob;
 use std::path::Path;
 
-pub fn add(path: String, term: String) {
+pub fn add(path: &str, term: &str) {
     let found_repos = search(with_pattern, path, term);
 
     for repo in found_repos {
@@ -22,7 +22,7 @@ pub fn add(path: String, term: String) {
 pub fn list() {
     match get_repositories() {
         Ok(repos) => {
-            if repos.len() > 0 {
+            if !repos.is_empty() {
                 for repo in repos {
                     println!("{}", repo.name)
                 }
@@ -48,11 +48,7 @@ pub fn rm(repo_name: String) {
     }
 }
 
-fn search<F: Fn(String, String) -> String>(
-    f: F,
-    path: String,
-    pattern: String,
-) -> Vec<NewRepository> {
+fn search<F: Fn(&str, &str) -> String>(f: F, path: &str, pattern: &str) -> Vec<NewRepository> {
     let path_pattern = f(path, pattern);
     let mut repositories: Vec<NewRepository> = Vec::new();
 
@@ -71,7 +67,6 @@ fn search<F: Fn(String, String) -> String>(
     repositories
 }
 
-fn with_pattern(path: String, pattern: String) -> String {
-    let path_pattern = path.to_string() + &pattern.to_string();
-    String::from(path_pattern)
+fn with_pattern(path: &str, pattern: &str) -> String {
+    path.to_string() + pattern
 }
