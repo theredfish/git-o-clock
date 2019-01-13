@@ -1,6 +1,6 @@
 [package]
 name = "grm"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Julian Didier (theredfish) <did.julian@gmail.com>"]
 edition = "2018"
 
