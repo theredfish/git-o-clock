@@ -143,9 +143,9 @@ This project is work in progress, here the list of expected features :
 - [ ] auto-completion on repositories
 
 ## nice-to-have features
+- [ ] parallelized search
 - [ ] categorize repositories
 - [ ] installation script
-
 ## migrations and updates
 - [x] automatic migrations
 - [ ] replace the automatic migrations with a prompt to ask if the user want to make the update

@@ -7,7 +7,6 @@ extern crate diesel_migrations;
 
 use clap::Shell;
 use std::io;
-use std::process;
 
 mod cli;
 mod config;
@@ -17,21 +16,8 @@ mod grm;
 use config::Config;
 use grm::Grm;
 
-const ERROR_OPEN_ISSUE: &str = "If you think this is a bug, feel free to open an issue : https://github.com/theredfish/git-repo-manager/issues/new";
-const CONFIG_FILE: &str = "config.json";
-
 fn main() {
-    // load the configuration file
-    let config = Config::new(CONFIG_FILE).unwrap_or_else(|e| {
-        eprintln!(
-            "Cannot read or load the configuration file `{}`. {}",
-            CONFIG_FILE, e
-        );
-        eprintln!("{}", ERROR_OPEN_ISSUE);
-        process::exit(1);
-    });
-    println!("config : {:?}", config);
-    run(Grm::new(config));
+    run(Grm::new(Config::new()));
 }
 
 fn run(grm: Grm) {
