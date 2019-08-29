@@ -17,7 +17,8 @@ use config::Config;
 use grm::Grm;
 
 fn main() {
-    run(Grm::new(Config::new()));
+    let config = Config::new();
+    run(Grm::new(config));
 }
 
 fn run(grm: Grm) {

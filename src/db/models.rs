@@ -1,5 +1,5 @@
-use crate::db::establish_connection;
 use crate::db::schema::repositories;
+use crate::db::SqliteDatabase;
 use diesel;
 use diesel::prelude::*;
 use diesel::result::Error;
@@ -23,16 +23,9 @@ impl NewRepository {
     }
 }
 
-pub fn count_repositories() -> Result<usize, Error> {
-    use crate::db::schema::repositories::dsl::*;
-    let connection = establish_connection();
-
-    repositories.count().execute(&connection)
-}
-
 pub fn create_repository(new_repository: &NewRepository) -> Result<Repository, Error> {
     use crate::db::schema::repositories::dsl::*;
-    let connection = establish_connection();
+    let connection = SqliteDatabase::new().conn;
 
     diesel::insert_into(repositories)
         .values(new_repository)
@@ -45,37 +38,23 @@ pub fn create_repository(new_repository: &NewRepository) -> Result<Repository, E
 
 pub fn get_repositories() -> Result<Vec<Repository>, Error> {
     use crate::db::schema::repositories::dsl::*;
-    let connection = establish_connection();
+    let connection = SqliteDatabase::new().conn;
 
     repositories.load::<Repository>(&connection)
 }
 
 pub fn get_repository(repo_name: String) -> Result<Repository, Error> {
     use crate::db::schema::repositories::dsl::*;
-    let connection = establish_connection();
+    let connection = SqliteDatabase::new().conn;
 
     repositories.find(repo_name).first(&connection)
 }
 
 pub fn remove_repository(repo_name: String) -> Result<usize, Error> {
     use crate::db::schema::repositories::dsl::*;
-    let connection = establish_connection();
+    let connection = SqliteDatabase::new().conn;
 
     diesel::delete(repositories)
         .filter(name.eq(repo_name))
         .execute(&connection)
-}
-
-pub fn migrations_done() -> Result<bool, Error> {
-    use diesel::dsl::sql;
-    use diesel::sql_types::Bool;
-    use diesel::select;
-
-    let connection = establish_connection();
-
-    // Check if at least one migration has been done
-    select(sql::<Bool>(
-        "EXISTS (SELECT * FROM __diesel_schema_migrations WHERE version >= '1')",
-    ))
-    .get_result(&connection)
 }
