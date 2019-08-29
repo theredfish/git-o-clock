@@ -10,37 +10,47 @@ use std::io;
 use std::process;
 
 mod cli;
-pub mod db;
+mod config;
+mod db;
 mod grm;
 
-fn main() {
-    if let Err(e) = db::run_pending_migrations() {
-        eprintln!("GRM update failed : {}", e);
-        eprintln!("Please open an issue with your output : https://github.com/theredfish/git-repo-manager/issues/new");
-        process::exit(1);
-    }
+use config::Config;
+use grm::Grm;
 
-    run();
+const ERROR_OPEN_ISSUE: &str = "If you think this is a bug, feel free to open an issue : https://github.com/theredfish/git-repo-manager/issues/new";
+const CONFIG_FILE: &str = "config.json";
+
+fn main() {
+    // load the configuration file
+    let config = Config::new(CONFIG_FILE).unwrap_or_else(|e| {
+        eprintln!(
+            "Cannot read or load the configuration file `{}`. {}",
+            CONFIG_FILE, e
+        );
+        eprintln!("{}", ERROR_OPEN_ISSUE);
+        process::exit(1);
+    });
+    println!("config : {:?}", config);
+    run(Grm::new(config));
 }
 
-fn run() {
+fn run(grm: Grm) {
     let matches = cli::build_cli().get_matches();
 
     match matches.subcommand() {
         ("add", Some(add_matches)) => {
-            let git_pattern = "/**/*.git";
-            let add_path = add_matches.value_of("path").unwrap_or(".");
-            grm::add(add_path, git_pattern);
+            let path = add_matches.value_of("path").unwrap_or(".");
+            grm.add(path.to_string());
         }
         ("goto", Some(goto_matches)) => {
             if let Some(repo_name) = goto_matches.value_of("repo_name") {
-                grm::goto(String::from(repo_name));
+                grm.goto(String::from(repo_name));
             }
         }
-        ("list", Some(_)) => grm::list(),
+        ("list", Some(_)) => grm.list(),
         ("rm", Some(rm_matches)) => {
             if let Some(repo_name) = rm_matches.value_of("repo_name") {
-                grm::rm(String::from(repo_name));
+                grm.rm(String::from(repo_name));
             }
         }
         ("completions", Some(_)) => {
