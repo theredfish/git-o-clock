@@ -11,11 +11,13 @@ use std::process;
 pub mod models;
 pub mod schema;
 
+const DB_FILE: &str = "grm.sqlite3";
+
 pub fn establish_connection() -> SqliteConnection {
     let exe_path = match env::current_exe() {
         Ok(exe_path) => exe_path,
         Err(e) => {
-            eprintln!("Failed to find the path to the executable : {}", e);
+            eprintln!("Failed to find the executable : {}", e);
             process::exit(1);
         }
     };
@@ -23,20 +25,20 @@ pub fn establish_connection() -> SqliteConnection {
     let exe_dir = match exe_path.parent() {
         Some(dir) => dir,
         None => {
-            eprintln!("Failed to find the the path to the installation folder");
+            eprintln!("Failed to find the installation folder");
             process::exit(1);
         }
     };
 
     let key = "DATABASE_URL";
-    let db_file = exe_dir.join("grm.sqlite3");
+    let db_file = exe_dir.join(DB_FILE);
 
     if !Path::new(&db_file).exists() {
-        eprintln!("Database file not found");
+        eprintln!("Database file {} not found", DB_FILE);
         process::exit(1);
     }
 
-    env::set_var(key, exe_dir.join("grm.sqlite3"));
+    env::set_var(key, exe_dir.join(DB_FILE));
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 

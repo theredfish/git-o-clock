@@ -23,6 +23,13 @@ impl NewRepository {
     }
 }
 
+pub fn count_repositories() -> Result<usize, Error> {
+    use crate::db::schema::repositories::dsl::*;
+    let connection = establish_connection();
+
+    repositories.count().execute(&connection)
+}
+
 pub fn create_repository(new_repository: &NewRepository) -> Result<Repository, Error> {
     use crate::db::schema::repositories::dsl::*;
     let connection = establish_connection();
@@ -57,4 +64,18 @@ pub fn remove_repository(repo_name: String) -> Result<usize, Error> {
     diesel::delete(repositories)
         .filter(name.eq(repo_name))
         .execute(&connection)
+}
+
+pub fn migrations_done() -> Result<bool, Error> {
+    use diesel::dsl::sql;
+    use diesel::sql_types::Bool;
+    use diesel::select;
+
+    let connection = establish_connection();
+
+    // Check if at least one migration has been done
+    select(sql::<Bool>(
+        "EXISTS (SELECT * FROM __diesel_schema_migrations WHERE version >= '1')",
+    ))
+    .get_result(&connection)
 }

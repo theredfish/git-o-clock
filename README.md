@@ -1,5 +1,5 @@
 # Git Repository Manager
-<!-- > Please note that I'm currently working on this project but my time is very limited at the moment. If you're interested by the project let me know, I'm looking for contributions! You can take a task from the Status section, create a PR and start coding. Thank you! -->
+> Plase note that the API will strongly evolve until the stable version in `1.0.0`. Do not use if you're looking for a stable software.
 
 GRM : A light git repository manager written in Rust for use in terminal.
 Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works).
@@ -108,6 +108,26 @@ Finally source your profile :
 ```
 . $PROFILE
 ```
+
+# Development
+## Prerequisites
+- Rust 1.37
+
+### SQLite3
+Install the following dependencies (it may change depending of your distribution): 
+```bash
+# OS dependencies
+sudo apt-get install libsqlite3-dev
+
+# Diesel CLI with sqlite only
+cargo install diesel_cli --no-default-features --features sqlite
+```
+
+Or avoid installing OS dependencies by [playing with the bundled libsqlite3-sys in diesel_cli](https://github.com/theredfish/diesel/commit/3f7c365bb4df614574596fd27f716b000101e063).
+
+## Manage wrapper scripts
+TODO
+
 
 # Features
 This project is work in progress, here the list of expected features :
