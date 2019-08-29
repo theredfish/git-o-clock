@@ -1,5 +1,5 @@
 use crate::config::Config;
-use crate::db::{self, models::*};
+use crate::db::{models::*, SqliteDatabase};
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::DatabaseError;
 use dunce;
@@ -15,10 +15,12 @@ pub struct Grm {
 
 impl Grm {
     pub fn new(config: Config) -> Self {
+        let db = SqliteDatabase::new();
+
         // Run pending migrations - used to initialize and update the SQLite database.
         // TODO : prompt a question to know if the user wants to apply the update.
-        if let Err(e) = db::run_pending_migrations() {
-            eprintln!("Update failed : {}", e);
+        if let Err(e) = db.run_pending_migrations() {
+            eprintln!("GRM update failed : {}", e);
             eprintln!("{}", ERROR_OPEN_ISSUE);
             process::exit(1);
         };
