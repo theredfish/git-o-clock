@@ -1,8 +1,12 @@
 # Git Repository Manager
 > Plase note that the API will strongly evolve until the stable version in `1.0.0`. Do not use if you're looking for a stable software.
 
-GRM : A light git repository manager written in Rust for use in terminal.
-Supports Linux, Max OSX, and Windows 10 (not tested from W7 but may works).
+GRM : A light git repository manager written in Rust for use in terminal
+
+Available with : 
+- [x] Bash
+- [ ] Zsh (work in progress)
+- [ ] Powershell (work in progress)
 
 ![Demo with bash](doc/demo_bash.gif)
 
@@ -46,9 +50,6 @@ cp completion_scripts/grm.bash-completion.sh ~/.grm
 
 # Copy the binary
 cp target/release/grm ~/.grm
-
-# create the database file (if doesn't exist)
-touch ~/.grm/grm.sqlite3
 ```
 
 #### Windows (powershell)
@@ -60,9 +61,6 @@ cp grm.ps1 ~/.grm
 
 # Copy the binary
 cp target/release/grm.exe ~/.grm
-
-# create the database file
-New-Item ~/.grm/grm.sqlite3 -ItemType file
 ```
 
 ## Setup grm alias
@@ -137,19 +135,17 @@ This project is work in progress, here the list of expected features :
 - [x] list repositories
 - [x] change directory for a given repository name
 - [x] remove repository
-- [ ] clean dead repositories
-- [ ] update repositories (name and path)
+- [ ] refresh repositories (delete dead ones and add new ones)
 - [ ] list repositories with filters / pattern
-- [ ] auto-completion on repositories
 
 ## nice-to-have features
 - [ ] parallelized search
 - [ ] categorize repositories
 - [ ] installation script
+
 ## migrations and updates
 - [x] automatic migrations
-- [ ] replace the automatic migrations with a prompt to ask if the user want to make the update
-- [ ] always make a save of `grm.sqlite3` before a migration
+- [ ] always make a save of `grm.db` before a migration
 - [ ] if a migration fails, restore the previous version
 
 ## system wrappers
@@ -159,7 +155,7 @@ This project is work in progress, here the list of expected features :
 - [ ] powershell auto-completion
 - [ ] zsh auto-completion
 
-## not so sure :
+## not so sure
 - [ ] use [r2d2](https://github.com/sfackler/r2d2) : set of open db connections for repeated use
 - [ ] implement [tui-rs](https://github.com/fdehau/tui-rs) or [termion](https://github.com/ticki/termion) : wait for a Windows implementation (see [termion issue "interest in windows port"](https://github.com/ticki/termion/issues/103))
 
