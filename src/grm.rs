@@ -3,7 +3,7 @@ use crate::db::{self, models::*};
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::DatabaseError;
 use dunce;
-use glob::glob;
+use globwalk;
 use std::path::Path;
 use std::process;
 
@@ -27,7 +27,7 @@ impl Grm {
     }
 
     pub fn add(self, path: String) {
-        let found_repos = self.search(path);
+        let found_repos = self.search(path.as_str());
 
         for repo in found_repos {
             match create_repository(&repo) {
@@ -69,15 +69,11 @@ impl Grm {
         }
     }
 
-    fn search(self, path: String) -> Vec<NewRepository> {
-        // let glob_path = path + &self.config.depth_to_glob();
-        let mut repositories: Vec<NewRepository> = Vec::new();
-        let mut max_glob = path + "/";
-
+    fn search(self, path: &str) -> Vec<NewRepository> {
         println!("Searching for git repositories (it may take a few seconds).");
 
-        fn path_buf_to_repo(path_buf: std::path::PathBuf) -> NewRepository {
-            let absolute_path = dunce::canonicalize(path_buf).unwrap();
+        fn dir_entry_to_repo(dir_entry: globwalk::DirEntry) -> NewRepository {
+            let absolute_path = dunce::canonicalize(dir_entry.path()).unwrap();
             let parent = absolute_path.parent().unwrap();
             let name = parent.iter().last().unwrap().to_str().unwrap();
             let path = parent.to_str().unwrap();
@@ -85,24 +81,23 @@ impl Grm {
             NewRepository::new(String::from(name), String::from(path))
         }
 
-        // For each depth, check if a .git exists
-        for d in 0..self.config.max_depth_search {
-            // we check in sub folders
-            if d > 0 {
-                max_glob += "*/";
+        let mut patterns = vec![".git".to_string()];
+
+        if let Some(ignored_folders) = self.config.ignored_folders {
+            for folder in ignored_folders {
+                let ignored_folder = "!".to_string() + &folder;
+                patterns.push(ignored_folder);
             }
+        }
 
-            println!("depth : {}; glob : {:?}", d, max_glob);
-
-            // For each glob depth
-            let mut new_repositories: Vec<NewRepository> = glob(&(max_glob.to_owned() + ".git"))
+        let repositories: Vec<NewRepository> =
+            globwalk::GlobWalkerBuilder::from_patterns(path.to_string(), &patterns)
+                .max_depth(self.config.max_depth_search)
+                .build()
                 .unwrap()
                 .filter_map(Result::ok)
-                .map(path_buf_to_repo)
+                .map(dir_entry_to_repo)
                 .collect();
-
-            repositories.append(&mut new_repositories);
-        }
 
         repositories
     }
