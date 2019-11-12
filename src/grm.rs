@@ -2,8 +2,8 @@ use crate::config::Config;
 use crate::db::{models::*, SqliteDatabase};
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::DatabaseError;
-use dunce;
 use globwalk;
+use std::convert::TryFrom;
 use std::path::Path;
 use std::process;
 
@@ -29,9 +29,9 @@ impl Grm {
     }
 
     pub fn add(self, path: String) {
-        let found_repos = self.search(path.as_str());
+        let search = self.search(path.as_str());
 
-        for repo in found_repos {
+        for repo in search {
             match create_repository(&repo) {
                 Ok(inserted_repo) => println!("-> {}", inserted_repo.name),
                 Err(DatabaseError(UniqueViolation, _)) => {
@@ -73,16 +73,6 @@ impl Grm {
 
     fn search(self, path: &str) -> Vec<NewRepository> {
         println!("Searching for git repositories (it may take a few seconds).");
-
-        fn dir_entry_to_repo(dir_entry: globwalk::DirEntry) -> NewRepository {
-            let absolute_path = dunce::canonicalize(dir_entry.path()).unwrap();
-            let parent = absolute_path.parent().unwrap();
-            let name = parent.iter().last().unwrap().to_str().unwrap();
-            let path = parent.to_str().unwrap();
-
-            NewRepository::new(String::from(name), String::from(path))
-        }
-
         let mut patterns = vec![".git".to_string()];
 
         if let Some(ignored_folders) = self.config.ignored_folders {
@@ -98,7 +88,14 @@ impl Grm {
                 .build()
                 .unwrap()
                 .filter_map(Result::ok)
-                .map(dir_entry_to_repo)
+                .map(NewRepository::try_from)
+                .filter_map(|result| match result {
+                    Ok(res) => Some(res),
+                    Err(err) => {
+                        eprintln!("{} : {}", path.to_string(), err);
+                        None
+                    }
+                })
                 .collect();
 
         repositories
