@@ -1,13 +1,12 @@
 use crate::config::Config;
 use crate::db::{models::*, SqliteDatabase};
+use crate::errors::GrmError;
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::DatabaseError;
 use globwalk;
 use std::convert::TryFrom;
 use std::path::Path;
 use std::process;
-
-const ERROR_OPEN_ISSUE: &str = "If you think this is a bug, feel free to open an issue : https://github.com/theredfish/git-repo-manager/issues/new";
 
 pub struct Grm {
     config: Config,
@@ -19,9 +18,8 @@ impl Grm {
 
         // Run pending migrations - used to initialize and update the SQLite database.
         // TODO : prompt a question to know if the user wants to apply the update.
-        if let Err(e) = db.run_pending_migrations() {
-            eprintln!("GRM update failed : {}", e);
-            eprintln!("{}", ERROR_OPEN_ISSUE);
+        if db.run_pending_migrations().is_err() {
+            eprintln!("{}", GrmError::RunPendingMigrationsFailed);
             process::exit(1);
         };
 
@@ -35,17 +33,21 @@ impl Grm {
             match create_repository(&repo) {
                 Ok(inserted_repo) => println!("-> {}", inserted_repo.name),
                 Err(DatabaseError(UniqueViolation, _)) => {
-                    eprintln!("{} : name already exists", repo.name)
+                    eprintln!("{}", GrmError::RepositoryAlreadyExists(repo.name))
                 }
-                Err(e) => eprintln!("Cannot create the repository {} : {}", repo.name, e),
+                Err(_) => eprintln!("{}", GrmError::CreateRepositoryFailed(repo.name)),
             };
         }
     }
 
+    // TODO : see how to handle the query error (e.g a connection error)
+    // which is different of a non-existinf entry in the database
     pub fn goto(self, repo_name: String) {
+        let repository_name = repo_name.clone();
+
         match get_repository(repo_name) {
             Ok(repo) => println!("{}", Path::new(&repo.path).display()),
-            Err(e) => eprintln!("Cannot retrieve the repository : {}", e),
+            Err(_) => eprintln!("{}", GrmError::RepositoryNotFound(repository_name)),
         }
     }
 
@@ -57,17 +59,18 @@ impl Grm {
                         println!("{}", repo.name)
                     }
                 } else {
-                    println!("No repository found - try to add a path or to run `grm refresh`.");
+                    eprintln!("{}", GrmError::RepositoriesListEmpty)
                 }
             }
-            Err(e) => eprintln!("Cannot list repositories : {}", e),
+            Err(e) => eprintln!("{} - {}", GrmError::Database, e),
         }
     }
 
     pub fn rm(self, repo_name: String) {
+        let repository_name = repo_name.clone();
         match remove_repository(repo_name) {
             Ok(count) => println!("{} project(s) removed", count),
-            Err(e) => eprintln!("Cannot remove the repository : {}", e),
+            Err(_) => eprintln!("{}", GrmError::RemoveRepositoryFailed(repository_name)),
         }
     }
 
