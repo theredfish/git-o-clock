@@ -11,6 +11,7 @@ use std::io;
 mod cli;
 mod config;
 mod db;
+mod errors;
 mod grm;
 
 use config::Config;
