@@ -1,9 +1,9 @@
-# Git Repository Manager
+# Git Repository Manager [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![Build Status](https://travis-ci.org/theredfish/git-repo-manager.svg?branch=master)](https://travis-ci.org/theredfish/git-repo-manager)
 > Plase note that the API will strongly evolve until the stable version in `1.0.0`. Do not use if you're looking for a stable software.
 
 GRM : A light git repository manager written in Rust for use in terminal
 
-Available with : 
+Available with :
 - [x] Bash
 - [ ] Zsh (work in progress)
 - [ ] Powershell (work in progress)
@@ -112,7 +112,7 @@ Finally source your profile :
 - Rust 1.37
 
 ### SQLite3
-Install the following dependencies (it may change depending of your distribution): 
+Install the following dependencies (it may change depending of your distribution):
 ```bash
 # OS dependencies
 sudo apt-get install libsqlite3-dev
