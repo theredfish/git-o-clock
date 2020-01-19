@@ -5,8 +5,8 @@ GRM : A light git repository manager written in Rust for use in terminal
 
 Available with :
 - [x] Bash
-- [ ] Zsh (work in progress)
 - [ ] Powershell (work in progress)
+- [ ] Zsh
 
 ![Demo with bash](doc/demo_bash.gif)
 
