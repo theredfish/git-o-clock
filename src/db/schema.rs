@@ -1,6 +1,6 @@
 table! {
-	repositories(name) {
-		name -> Text,
-		path -> Text,
-	}
+    repositories(name) {
+        name -> Text,
+        path -> Text,
+    }
 }
