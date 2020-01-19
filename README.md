@@ -3,10 +3,10 @@
 
 GRM : A light git repository manager written in Rust for use in terminal
 
-Available with : 
+Available with :
 - [x] Bash
-- [ ] Zsh (work in progress)
 - [ ] Powershell (work in progress)
+- [ ] Zsh
 
 ![Demo with bash](doc/demo_bash.gif)
 
@@ -112,7 +112,7 @@ Finally source your profile :
 - Rust 1.37
 
 ### SQLite3
-Install the following dependencies (it may change depending of your distribution): 
+Install the following dependencies (it may change depending of your distribution):
 ```bash
 # OS dependencies
 sudo apt-get install libsqlite3-dev

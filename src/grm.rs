@@ -5,7 +5,7 @@ use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel::result::Error::DatabaseError;
 use globwalk;
 use std::convert::TryFrom;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process;
 
 pub struct Grm {
@@ -26,51 +26,56 @@ impl Grm {
         Grm { config }
     }
 
-    pub fn add(self, path: String) {
+    pub fn add(self, path: String) -> Vec<Result<Repository, GrmError>> {
         let search = self.search(path.as_str());
 
-        for repo in search {
-            match create_repository(&repo) {
-                Ok(inserted_repo) => println!("-> {}", inserted_repo.name),
+        search
+            .iter()
+            .map(|new_repo| match create_repository(new_repo) {
+                Ok(repo) => Ok(repo),
                 Err(DatabaseError(UniqueViolation, _)) => {
-                    eprintln!("{}", GrmError::RepositoryAlreadyExists(repo.name))
+                    Err(GrmError::RepositoryAlreadyExists(new_repo.name.to_owned()))
                 }
-                Err(_) => eprintln!("{}", GrmError::CreateRepositoryFailed(repo.name)),
-            };
-        }
+                Err(_) => Err(GrmError::CreateRepositoryFailed(new_repo.name.to_owned())),
+            })
+            .collect()
     }
 
     // TODO : see how to handle the query error (e.g a connection error)
-    // which is different of a non-existinf entry in the database
-    pub fn goto(self, repo_name: String) {
+    // which is different of a non-existing entry in the database
+    pub fn location(self, repo_name: String) -> Result<PathBuf, GrmError> {
         let repository_name = repo_name.clone();
 
         match get_repository(repo_name) {
-            Ok(repo) => println!("{}", Path::new(&repo.path).display()),
-            Err(_) => eprintln!("{}", GrmError::RepositoryNotFound(repository_name)),
+            Ok(repo) => Ok(Path::new(&repo.path).to_owned()),
+            Err(_) => Err(GrmError::RepositoryNotFound(repository_name)),
         }
     }
 
-    pub fn list(self) {
+    pub fn list(self) -> Result<Vec<Repository>, GrmError> {
         match get_repositories() {
             Ok(repos) => {
-                if !repos.is_empty() {
-                    for repo in repos {
-                        println!("{}", repo.name)
-                    }
-                } else {
-                    eprintln!("{}", GrmError::RepositoriesListEmpty)
+                if repos.is_empty() {
+                    return Err(GrmError::RepositoriesListEmpty);
                 }
+
+                Ok(repos)
             }
-            Err(e) => eprintln!("{} - {}", GrmError::Database, e),
+            Err(_) => Err(GrmError::Database),
         }
     }
 
-    pub fn rm(self, repo_name: String) {
+    pub fn rm(self, repo_name: String) -> Result<usize, GrmError> {
         let repository_name = repo_name.clone();
         match remove_repository(repo_name) {
-            Ok(count) => println!("{} project(s) removed", count),
-            Err(_) => eprintln!("{}", GrmError::RemoveRepositoryFailed(repository_name)),
+            Ok(count) => {
+                if count > 0 {
+                    return Ok(count);
+                }
+
+                Err(GrmError::RepositoryNotFound(repository_name))
+            }
+            Err(_) => Err(GrmError::RemoveRepositoryFailed(repository_name)),
         }
     }
 

@@ -28,7 +28,7 @@ impl fmt::Display for GrmError {
             ),
             GrmError::RepositoryNotFound(ref repo) => write!(f, "Unable to find {}", repo),
             GrmError::Database => write!(f, "An error occured while querying the database"),
-            GrmError::RunPendingMigrationsFailed => write!(f, "GRM update failed "),
+            GrmError::RunPendingMigrationsFailed => write!(f, "GRM update failed"),
         }
     }
 }
