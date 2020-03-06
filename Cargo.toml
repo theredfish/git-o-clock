@@ -9,7 +9,7 @@ clap = "^2.33.0"
 diesel = { version = "^1.4.2", features = ["sqlite"] }
 diesel_migrations = {version = "^1.4.0", features = ["sqlite"]}
 dunce = "^1.0.0"
-globwalk = "^0.7.1"
+globwalk = "^0.7.3"
 libsqlite3-sys = { version = ">=0.8.0, <0.16.0", features = ["min_sqlite_version_3_7_16", "bundled"] }
 serde = { version = "1.0.99", features = ["derive"] }
 serde_json = "^1.0.40"
