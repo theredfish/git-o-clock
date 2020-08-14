@@ -5,7 +5,7 @@ authors = ["Julian Didier (theredfish) <did.julian@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-clap = "^2.33.0"
+clap = "^2.33.3"
 diesel = { version = "^1.4.2", features = ["sqlite"] }
 diesel_migrations = {version = "^1.4.0", features = ["sqlite"]}
 dunce = "^1.0.0"
