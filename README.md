@@ -1,6 +1,6 @@
 # Git Repository Manager [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com) [![Build Status](https://travis-ci.org/theredfish/git-repo-manager.svg?branch=master)](https://travis-ci.org/theredfish/git-repo-manager) [![Join the chat at https://gitter.im/git-repo-manager/community](https://badges.gitter.im/git-repo-manager/community.svg)](https://gitter.im/git-repo-manager/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-> This repository is no longer maintained anymore but will remain opened to anyone interested in the code.
+> This repository is no longer maintained but will remain opened to anyone interested in the code.
 
 GRM : A light git repository manager written in Rust for use in terminal
 
